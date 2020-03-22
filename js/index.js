@@ -3,30 +3,36 @@ const ctx = canvas.getContext('2d');
 const scoreElement = document.getElementById('score');
 const favicon = document.getElementById('favicon');
 const size = 16;
+let highscore = 0;
+canvas.width = size;
+canvas.height = size;
 const DIRECTIONS = {
     LEFT: 0,
     UP: 1,
     RIGHT: 2,
     DOWN: 3
 }
-let dir = DIRECTIONS.DOWN;
-let score = 0;
-canvas.width = size;
-canvas.height = size;
-let snakeArr = [{
-    x: 0,
-    y: 0
-}, {
-    x: 0,
-    y: 1
-}]
-let snakeObj = {}
-snakeArr.forEach(e => snakeObj[`${e.x},${e.y}`] = true)
-let food = {
-    x: 8,
-    y: 8
-};
+let dir, score, snakeArr, snakeObj, food;
 
+function setup() {
+    scoreElement.innerText = ''
+    dir = DIRECTIONS.DOWN;
+    score = 0;
+    snakeArr = [{
+        x: 0,
+        y: 0
+    }, {
+        x: 0,
+        y: 1
+    }]
+    snakeObj = {}
+    snakeArr.forEach(e => snakeObj[`${e.x},${e.y}`] = true)
+    food = {
+        x: 8,
+        y: 8
+    };
+}
+setup()
 function drawFavicon() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, size, size);
@@ -63,7 +69,13 @@ function move(foundFood = false) {
             break;
     }
     if (snakeObj[`${nextPoint.x},${nextPoint.y}`]) {
-        location.reload()
+        if (score > highscore) {
+            highscore = score;
+        }
+        score = 0;
+        document.title = `favesnake | ${highscore}`
+        setup()
+        return;
     }
     snakeArr.push(nextPoint)
     snakeObj[`${nextPoint.x},${nextPoint.y}`] = true;

@@ -1,9 +1,12 @@
 # favsnek
 
-Play a super simple Snake game in your favicon!
+Play a super simple Snake game in your favicon using arrow keys!
+
+![](img/demo2.gif)
+-----------------
+![](img/demo1.gif)
 
 Press 'h' to hide the larger display
 
-## Todo:
-- Make mobile friendly
-- Add end of game screen
+## Notes:
+- Not mobile friendly
