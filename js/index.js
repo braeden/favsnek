@@ -33,6 +33,7 @@ function setup() {
     };
 }
 setup()
+
 function drawFavicon() {
     ctx.fillStyle = '#000000';
     ctx.fillRect(0, 0, size, size);
@@ -42,9 +43,8 @@ function drawFavicon() {
     })
     ctx.fillStyle = '#ff0000'
     ctx.fillRect(food.x, food.y, 1, 1)
+    favicon.setAttribute('href', canvas.toDataURL())
     move();
-    const dataURL = canvas.toDataURL();
-    favicon.setAttribute('href', dataURL)
 }
 
 function move(foundFood = false) {
@@ -53,26 +53,17 @@ function move(foundFood = false) {
         delete snakeObj[`${removed.x},${removed.y}`]
     }
     const head = snakeArr[snakeArr.length - 1]
-    nextPoint = Object.assign({}, head)
-    switch (dir) {
-        case DIRECTIONS.UP:
-            nextPoint.y = (nextPoint.y - 1 + size) % size;
-            break;
-        case DIRECTIONS.DOWN:
-            nextPoint.y = (nextPoint.y + 1) % size;
-            break;
-        case DIRECTIONS.LEFT:
-            nextPoint.x = (nextPoint.x - 1 + size) % size;
-            break;
-        case DIRECTIONS.RIGHT:
-            nextPoint.x = (nextPoint.x + 1) % size;
-            break;
+    const nextPoint = Object.assign({}, head)
+    if (dir == DIRECTIONS.UP || dir == DIRECTIONS.DOWN) {
+        nextPoint.y = (nextPoint.y + dir - 2 + size) % size;
+    } else if (dir == DIRECTIONS.LEFT || dir == DIRECTIONS.RIGHT) {
+        nextPoint.x = (nextPoint.x + dir - 1 + size) % size;
     }
+
     if (snakeObj[`${nextPoint.x},${nextPoint.y}`]) {
         if (score > highscore) {
             highscore = score;
         }
-        score = 0;
         document.title = `favesnake | ${highscore}`
         setup()
         return;
@@ -86,15 +77,10 @@ function move(foundFood = false) {
     }
 }
 
-function getRandomInt(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function genFood() {
-    let x = getRandomInt(0, size - 1);
-    let y = getRandomInt(0, size - 1);
+    const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
+    const x = getRandomInt(0, size - 1);
+    const y = getRandomInt(0, size - 1);
     if (snakeObj[`${x},${y}`]) {
         genFood()
         return
@@ -105,11 +91,9 @@ function genFood() {
 
 setInterval(drawFavicon, 100);
 
-document.addEventListener('keydown', logKey);
-
-function logKey(e) {
+document.addEventListener('keydown', (e) => {
     dir = Math.abs(e.keyCode - 37) <= 4 ? e.keyCode - 37 : dir
     if (e.keyCode == 72) {
         canvas.style.display = canvas.style.display == 'none' ? 'block' : 'none'
     }
-}
+})
