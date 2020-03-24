@@ -13,6 +13,7 @@ const DIRECTIONS = {
     DOWN: 3
 }
 let dir, score, snakeArr, snakeObj, food;
+let start, end;
 
 function setup() {
     scoreElement.innerText = ''
@@ -64,7 +65,7 @@ function move(foundFood = false) {
         if (score > highscore) {
             highscore = score;
         }
-        document.title = `favesnake | ${highscore}`
+        document.title = `favsnek | ${highscore}`
         setup()
         return;
     }
@@ -76,6 +77,45 @@ function move(foundFood = false) {
         move(true)
     }
 }
+
+function handleGesture() {
+    //Source: https://gist.github.com/SleepWalker/da5636b1abcbaff48c4d
+    const {
+        width,
+        height
+    } = document.body.getBoundingClientRect();
+    const ratio_horizontal = (end.screenX - start.screenX) / width;
+    const ratio_vertical = (end.screenY - start.screenY) / height;
+    if (ratio_horizontal > ratio_vertical && ratio_horizontal > 0.1) {
+        dir = DIRECTIONS.RIGHT;
+    }
+    if (ratio_vertical > ratio_horizontal && ratio_vertical > 0.1) {
+        dir = DIRECTIONS.DOWN;
+    }
+    if (ratio_horizontal < ratio_vertical && ratio_horizontal < -0.1) {
+        dir = DIRECTIONS.LEFT;
+    }
+    if (ratio_vertical < ratio_horizontal && ratio_vertical < -0.1) {
+        dir = DIRECTIONS.UP;
+    }
+
+}
+
+
+document.addEventListener('touchstart', (e) => {
+    start = {
+        screenX: e.changedTouches[0].screenX,
+        screenY: e.changedTouches[0].screenY
+    }
+}, false);
+
+document.addEventListener('touchend', (e) => {
+    end = {
+        screenX: e.changedTouches[0].screenX,
+        screenY: e.changedTouches[0].screenY
+    }
+    handleGesture();
+}, false);
 
 function genFood() {
     const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
